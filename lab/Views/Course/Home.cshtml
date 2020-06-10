@@ -1,0 +1,130 @@
+﻿@model lab.ViewModel.CoursesViewMode
+@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<style>
+
+    .date {
+        text-align: center;
+        background-color: #d41d50;
+        color: white;
+        width: 60px;
+        border-radius: 8px;
+    }
+</style>
+
+<h2>Home</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", "Course")
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            Thời gian
+        </th>
+        <th>
+            Tên
+        </th>
+        <th>
+            Danh mục
+        </th>
+        <th>
+            Địa Điểm
+        </th>
+        <th>
+            Going
+        </th>
+        <th>
+            Following
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model.UpcommingCourses)
+    {
+        <tr>
+            <td>
+                <div class="date">
+                    <div class="month">@item.DateTime.ToString("MM")</div>
+                    <div class="day">@item.DateTime.ToString("dd") </div>
+                </div>
+            </td>
+            <td>
+                @item.Lecture.name
+            </td>
+            <td>
+                @item.Category.Name
+            </td>
+            <td>
+                @item.Place
+            </td>
+            
+            <td>
+                @if (item.LectureId == User.Identity.GetUserId() || !Model.ShowAction)
+                {
+                    <button data-course-id="@item.Id" class="btn btn-danger btn-sm js-toggle-attendance" disabled> Going</button>
+                }
+                else
+                {
+                    <button data-course-id="@item.Id" class="btn btn-default btn-sm js-toggle-attendance"> Going?</button>
+                }
+
+            </td>
+            <td>
+                @if (item.LectureId == User.Identity.GetUserId() ||!Model.ShowAction)
+                {
+                    <button data-user-id="@item.LectureId" class="btn btn-danger btn-sm js-toggle-follow" disabled> Follow</button>
+                }
+                else
+                {
+                    <button data-user-id="@item.LectureId" class="btn btn-default btn-sm js-toggle-follow"> Follow</button>
+                }
+
+
+            </td>
+
+        </tr>
+    }
+
+</table>
+
+<script type="text/javascript">
+    $(document).ready(() => {
+        $('.js-toggle-attendance').click((e) => {
+            var button = $(e.target);
+            var base_url = location.protocol + "//" + document.domain + ":" + location.port;
+            $.post('/api/Attendance', { courseId: button.attr("data-course-id") })
+                .done(() => {
+                    button
+                        .removeClass('btn-default')
+                        .addClass('btn-info')
+                        .text("Going");
+                })
+                .fail(() => {
+                    alert("something false");
+                })
+        })
+        $('.js-toggle-follow').click((e) => {
+            var button = $(e.target);
+
+            $.post('/api/Followings', { FolloweeId: button.attr("data-user-id") })
+                .done(() => {
+                    button
+                        .removeClass('btn-default')
+                        .addClass('btn-danger')
+                        .text("UnFollow");
+                })
+                .fail(() => {
+                    alert("something false");
+                })
+        })
+    })
+</script>
+
+
+

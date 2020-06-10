@@ -1,0 +1,68 @@
+﻿@model  IEnumerable<lab.Models.Course>
+
+@{
+    ViewBag.Title = "MineCourse";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    <style>
+       
+
+           
+
+                 .date {
+                    text-align: center;
+                    background-color: #d41d50;
+                    color: white;
+                    width: 60px;
+                    border-radius: 8px;
+                }
+
+               
+    </style>
+<h2>Mine Course</h2>
+<table class="table">
+    <tr>
+        <th>
+            Thời gian
+        </th>
+        <th>
+            Tên
+        </th>
+        <th>
+            Danh mục
+        </th>
+        <th>
+           Sửa
+        </th>
+        <th>
+            Xóa
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+<tr>
+    <td>
+        <div class="date">
+            <div class="month">@item.DateTime.ToString("MM")</div>
+            <div class="day">@item.DateTime.ToString("dd") </div>
+        </div>
+    </td>
+    <td>
+        @item.Lecture.name
+    </td>
+    <td>
+        @item.Category.Name
+    </td>
+    <td>
+        <a href="/Course/EditCourse/@item.Id">Edit</a>
+    </td>
+    <td>
+        <a href="/Course/DeleteCourse/@item.Id">Delete</a>
+    </td>
+
+</tr>
+    }
+
+</table>
