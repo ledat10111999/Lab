@@ -4,30 +4,30 @@
     ViewBag.Title = "Attending";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-    <style>
-        .course {
-            list-style: none;
+<style>
+    .course {
+        list-style: none;
+    }
+
+        .course > li {
+            position: relative;
+            margin-bottom: 30px;
         }
 
-            .course > li {
-                position: relative;
-                margin-bottom: 30px;
+            .course > li .date {
+                text-align: center;
+                background-color: #d41d50;
+                color: white;
+                width: 60px;
+                border-radius: 8px;
             }
 
-                .course > li .date {
-                    text-align: center;
-                    background-color: #d41d50;
-                    color: white;
-                    width: 60px;
-                    border-radius: 8px;
-                }
-
-                .course > li .detail {
-                    position: absolute;
-                    top: 5px;
-                    left: 70px;
-                }
-    </style>
+            .course > li .detail {
+                position: absolute;
+                top: 5px;
+                left: 70px;
+            }
+</style>
 <h2>Attending</h2>
 
 <ul class="course">
@@ -46,14 +46,103 @@
                 <span class="category">
                     @item.Category.Name
                 </span>
-               
-                    
-                    <button data-user-id="@item.LectureId" class="btn btn-default btn-sm js-toggle-follow"> UnFollow</button>
-                
-
+                <button data-user-id="@item.LectureId" class="btn btn-default btn-sm js-follow"> UnGoing</button>
             </div>
 
         </li>
     }
 </ul>
+@section scripts{
+    <script src="~/Scripts/jquery.confirm.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(() => {
+            $('.js-toggle-attendance').click((e) => {
+                var button = $(e.target);
+                var base_url = location.protocol + "//" + document.domain + ":" + location.port;
+                $.post('/api/Attendance', { courseId: button.attr("data-course-id") })
+                    .done(() => {
+                        button
+                            .removeClass('btn-default')
+                            .addClass('btn-info btn-sm')
+                            .text("UnGoing");
+                    })
+                    .fail(() => {
+                        alert("something false");
+                    })
+            })
+            $('.js-attendance').click((e) => {
+                var button = $(e.target);
 
+                $.confirm({
+                    title: 'Xác nhận',
+                    content: 'Bỏ theo dõi',
+                    buttons: {
+                        OK: function () {
+                            $.ajax({
+                                url: "/api/AttendanceGoing/" + button.attr("data-course-id"),
+                                method: "DELETE",
+
+                            }).done(() => {
+                                button
+                                    .removeClass('btn-info')
+                                    .addClass('btn-default')
+                                    .text("Going?");
+                            }).fail(() => {
+                                alert('Something fail')
+                            })
+
+                        },
+                        Hủy: function () {
+                            return
+                        }
+                    }
+                });
+            })
+            $('.js-toggle-follow').click((e) => {
+                var button = $(e.target);
+
+                $.post('/api/Followings', { FolloweeId: button.attr("data-user-id") })
+                    .done(() => {
+                        button
+                            .removeClass('btn-default')
+                            .addClass('btn-danger')
+                            .text("UnFollow");
+                        location.reload();
+                    })
+                    .fail(() => {
+                        alert("something false");
+                    })
+            })
+            $('.js-follow').click((e) => {
+                var button = $(e.target);
+                $.confirm({
+                    title: 'Xác nhận',
+                    content: 'Bỏ theo dõi',
+                    buttons: {
+                        OK: function () {
+                            $.ajax({
+                                url: "/api/Following/" + button.attr("data-user-id"),
+                                method: "DELETE",
+
+                            }).done(() => {
+                                button
+                                    .removeClass('btn-danger')
+                                    .addClass('btn-default')
+                                    .text("Follow");
+                                location.reload();
+                            }).fail(() => {
+                                alert('Something fail')
+                            })
+
+                        },
+                        Hủy: function () {
+                            return
+                        }
+                    }
+                });
+
+            })
+        })
+    </script>
+
+}

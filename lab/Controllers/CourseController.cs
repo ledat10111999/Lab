@@ -19,22 +19,56 @@ namespace lab.Controllers
         {
             _dbContext = new ApplicationDbContext();
         }
+        
         public ActionResult Home()
         {
-            var upcomming = _dbContext.Courses
-                .Include(c => c.Lecture)
-                .Include(c=> c.Category)
-                
-                .Where(c => c.DateTime > DateTime.Now);
-          
-            var viewModel = new CoursesViewMode
+            if (User.Identity.IsAuthenticated)
             {
-                UpcommingCourses = upcomming,
-                ShowAction = User.Identity.IsAuthenticated,
+                var upcomming = _dbContext.Courses
+                .Include(c => c.Lecture)
+                .Include(c => c.Category)
+                .Where(c => c.DateTime > DateTime.Now && c.IsCanceled == false);
+                var iduser = User.Identity.GetUserId();
+                var Getatendance = _dbContext.Attendances
+                    .Where(p => p.AttendeeId == iduser)
+                    .ToList();
+                var GetFollowing = _dbContext.Followings
+                    .Where(x => x.FolloweeId == iduser)
+                    .Include(p=>p.Follower)
+                    .Include(p=>p.Followee)
+                    .ToList();
+                var viewModel = new CoursesViewMode
+                {
+                    UpcommingCourses = upcomming,
+                    ShowAction = User.Identity.IsAuthenticated,
+                    GetAttendances = Getatendance,
+                    GetFollowings = GetFollowing
+                    
+                };
+                return View(viewModel);
+            }
+            else
+            {
+                var upcomming = _dbContext.Courses
+               .Include(c => c.Lecture)
+               .Include(c => c.Category)
+               .Where(c => c.DateTime > DateTime.Now && c.IsCanceled == false);
+                if (User.Identity.GetUserId() != null)
+                {
+
+                }
               
 
-            };
-            return View(viewModel);
+                var viewModel = new CoursesViewMode
+                {
+                    UpcommingCourses = upcomming,
+                    ShowAction = User.Identity.IsAuthenticated,
+                    
+
+                };
+                return View(viewModel);
+            }
+            
         }
         [Authorize]
         public ActionResult Create()
@@ -63,7 +97,8 @@ namespace lab.Controllers
                 CategoryId = viewModel.Category,
                 DateTime = viewModel.GetDateTime(),
                 LectureId = User.Identity.GetUserId(),
-                Place = viewModel.Place
+                Place = viewModel.Place,
+                IsCanceled = false
             };
             _dbContext.Courses.Add(course);
             _dbContext.SaveChanges();
@@ -90,7 +125,7 @@ namespace lab.Controllers
         [Authorize]
         public ActionResult Following()
         {
-            var userId = User.Identity.GetUserId();
+            var userId = User.Identity.GetUserId();           
             var query = from a in _dbContext.Users
                         join b in _dbContext.Followings on a.Id equals b.FollowerId
                         where b.FolloweeId == userId
@@ -126,6 +161,37 @@ namespace lab.Controllers
             };
             return View(viewModel);
         }
-        
+        [Authorize]
+        public ActionResult DetailLecture(string id)
+        {
+            if(id != null)
+            {
+                var upcomming = _dbContext.Courses
+                .Include(c => c.Lecture)
+                .Include(c => c.Category)
+                .Where(c => c.DateTime > DateTime.Now && c.IsCanceled == false &&c.LectureId == id);
+                var iduser = User.Identity.GetUserId();
+                var Getatendance = _dbContext.Attendances
+                    .Where(p => p.AttendeeId == iduser)
+                    .ToList();
+                var GetFollowing = _dbContext.Followings
+                    .Where(x => x.FolloweeId == iduser)
+                    .Include(p => p.Follower)
+                    .Include(p => p.Followee)
+                    .ToList();
+                var viewModel = new CoursesViewMode
+                {
+                    UpcommingCourses = upcomming,
+                    ShowAction = User.Identity.IsAuthenticated,
+                    GetAttendances = Getatendance,
+                    GetFollowings = GetFollowing
+
+                };
+                return View(viewModel);
+            }
+            return RedirectToAction("Home", "Course");
+        }
+
+
     }
 }

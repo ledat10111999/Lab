@@ -347,3 +347,4 @@ C:\Users\Admin\Desktop\05_Le Van Dat_1711062311\lab\obj\Debug\lab.dll
 C:\Users\Admin\Desktop\05_Le Van Dat_1711062311\lab\obj\Debug\lab.pdb
 C:\Users\Admin\Desktop\05_Le Van Dat_1711062311\lab\obj\Debug\lab.Migrations.newtable.resources
 C:\Users\Admin\Desktop\05_Le Van Dat_1711062311\lab\obj\Debug\lab.csproj.GenerateResource.cache
+C:\Users\Admin\Desktop\05_Le Van Dat_1711062311\lab\obj\Debug\lab.Migrations.AddIsCanceledColumToCourse.resources

@@ -6,7 +6,7 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-
+<link href="~/Content/jquery-confirm.min.css" rel="stylesheet" />
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -21,8 +21,7 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                   
                     <li>@Html.ActionLink("Create Course", "Create", "Course")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
