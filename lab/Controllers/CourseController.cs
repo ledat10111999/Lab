@@ -108,17 +108,21 @@ namespace lab.Controllers
         public ActionResult Attending()
         {
             var userId = User.Identity.GetUserId();
-
+            var iduser = User.Identity.GetUserId();
             var course = _dbContext.Attendances
                 .Where(a => a.AttendeeId == userId)
                 .Select(a => a.Course)
                 .Include(l => l.Lecture)
                 .Include(l => l.Category)
                 .ToList();
+            var Getatendance = _dbContext.Attendances
+                  .Where(p => p.AttendeeId == iduser)
+                  .ToList();
             var viewModel = new CoursesViewMode
             {
                 UpcommingCourses = course,
-                ShowAction = User.Identity.IsAuthenticated
+                ShowAction = User.Identity.IsAuthenticated,
+                GetAttendances = Getatendance
             };
             return View(viewModel);
         }

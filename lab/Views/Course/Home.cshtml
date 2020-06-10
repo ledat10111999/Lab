@@ -115,6 +115,7 @@
                             .removeClass('btn-default')
                             .addClass('btn-info btn-sm')
                             .text("UnGoing");
+                        location.reload();
                     })
                     .fail(() => {
                         alert("something false");
@@ -137,6 +138,7 @@
                                     .removeClass('btn-info')
                                     .addClass('btn-default')
                                     .text("Going?");
+                                location.reload();
                             }).fail(() => {
                                 alert('Something fail')
                             })
