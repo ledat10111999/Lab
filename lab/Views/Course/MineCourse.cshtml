@@ -17,63 +17,54 @@
 </style>
 <h2>Mine Course</h2>
 <table class="table ">
-    <tr>
-        <th>
-            Thời gian
-        </th>
-        <th>
-            Tên
-        </th>
-        <th>
-            Danh mục
-        </th>
-        <th>
-            Sửa
-        </th>
-        <th>
-            Hiển thị
-        </th>
-
+    <tr >
+        
+        <th>Thời gian</th>
+        <th>Tên</th>
+        <th>Địa chỉ</th>
+        <th>Danh mục</th>
+        <th>Sửa</th>
+        <th>Hiển thị</th>
     </tr>
 
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                <div class="date">
-                    <div class="month">@item.DateTime.ToString("MM")</div>
-                    <div class="day">@item.DateTime.ToString("dd") </div>
-                </div>
-            </td>
-            <td>
-                @item.Lecture.name
-            </td>
-            <td>
-                @item.Category.Name
-            </td>
-            <td>
-                 <a href="/Course/EditCourse/@item.Id" class="btn btn-info">Edit</a>
-            </td>
-           
-            <td>
-                @if (item.IsCanceled)
-                {
-                    <button class="btn btn-info btn-block Displaycourse fo" data-course-id="@item.Id">Display</button>
+<tr>
+    <td>
+        <div class="date">
+            <div class="month">@item.DateTime.ToString("MM")</div>
+            <div class="day">@item.DateTime.ToString("dd") </div>
+        </div>
+    </td>
+    <td>
+        @item.Lecture.name
+    </td>
+    <td>
+        @item.Place
+    </td>
+    <td>
+        @item.Category.Name
+    </td>
 
-                }
-                else
-                {
-                    <button class="btn btn-danger btn-block hiddencourse" data-course-id="@item.Id">Hidden</button>
-                }
+    <td>
+        <a href="/Course/EditCourse/@item.Id" class="btn btn-info">Edit</a>
+    </td>
 
+    <td>
+        @if (item.IsCanceled)
+        {
+            <button class="btn btn-info btn-block Displaycourse fo" data-course-id="@item.Id">Display</button>
 
-            </td>
-
-        </tr>
+        }
+        else
+        {
+            <button class="btn btn-danger btn-block hiddencourse" data-course-id="@item.Id">Hidden</button>
+        }
+    </td>
+</tr>
     }
 
 </table>
-
 @section scripts{
     <script src="~/Scripts/jquery.confirm.min.js"></script>
     <script type="text/javascript">
@@ -105,7 +96,6 @@
                     }
                 });
             })
-
             $(".Displaycourse").click((e) => {
                 e.preventDefault();
                 var link = $(e.target);
@@ -134,10 +124,6 @@
                 });
             })
         })
-
-
-
-
     </script>
 
 }

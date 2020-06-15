@@ -81,6 +81,7 @@ namespace lab.Models
         public string ConfirmPassword { get; set; }
         [Required]
         [StringLength(30)]
+        [Display(Name = "Name") ]
         public string name { get; set; }
     }
 

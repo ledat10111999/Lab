@@ -8,6 +8,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
 using Microsoft.Owin.Security.Provider;
+using System.Web.Helpers;
+using Newtonsoft.Json;
+using System.Web.UI.WebControls;
 
 namespace lab.Controllers
 {
@@ -19,6 +22,46 @@ namespace lab.Controllers
         {
             _dbContext = new ApplicationDbContext();
         }
+        /// <summary>
+        /// Send data to AngularJs
+        /// </summary>
+        /// <returns>
+        /// Json
+        /// </returns>
+        public ActionResult values()
+        {
+            var upcomming = _dbContext.Courses
+               .Include(c => c.Lecture)
+               .Include(c => c.Category)
+               .Where(c => c.DateTime > DateTime.Now && c.IsCanceled == false).ToList();
+            var iduser = User.Identity.GetUserId();
+            var Getatendance = _dbContext.Attendances
+                .Where(p => p.AttendeeId == iduser)
+                .ToList();
+            var GetFollowing = _dbContext.Followings
+                .Where(x => x.FolloweeId == iduser)
+                .Include(p => p.Follower)
+                .Include(p => p.Followee)
+                .ToList();
+            var viewModel = new CoursesViewMode
+            {
+                UpcommingCourses = upcomming,
+                ShowAction = User.Identity.IsAuthenticated,
+                GetAttendances = Getatendance,
+                GetFollowings = GetFollowing
+
+            };
+            var list = JsonConvert.SerializeObject(viewModel,
+                                                    Formatting.None,
+                                                    new JsonSerializerSettings()
+                    {
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                  });
+
+            return Content(list, "application/json");
+           
+           
+        }
         
         public ActionResult Home()
         {
@@ -27,7 +70,7 @@ namespace lab.Controllers
                 var upcomming = _dbContext.Courses
                 .Include(c => c.Lecture)
                 .Include(c => c.Category)
-                .Where(c => c.DateTime > DateTime.Now && c.IsCanceled == false);
+                .Where(c => c.DateTime > DateTime.Now && c.IsCanceled == false).ToList();
                 var iduser = User.Identity.GetUserId();
                 var Getatendance = _dbContext.Attendances
                     .Where(p => p.AttendeeId == iduser)
@@ -53,12 +96,6 @@ namespace lab.Controllers
                .Include(c => c.Lecture)
                .Include(c => c.Category)
                .Where(c => c.DateTime > DateTime.Now && c.IsCanceled == false);
-                if (User.Identity.GetUserId() != null)
-                {
-
-                }
-              
-
                 var viewModel = new CoursesViewMode
                 {
                     UpcommingCourses = upcomming,
@@ -79,8 +116,6 @@ namespace lab.Controllers
                 Categories = _dbContext.Categories.ToList()
             };
             return View(viewModel);
-
-
         }
         [HttpPost]
         [Authorize]
@@ -152,19 +187,41 @@ namespace lab.Controllers
         [Authorize]
         public ActionResult EditCourse (int? id)
         {
-            var userId = User.Identity.GetUserId();
-            var course = _dbContext.Courses.FirstOrDefault(p => p.Id == id && p.LectureId == userId);
-
-            var viewModel = new CourseViewModel
+            if(id != null)
             {
-                Categories = _dbContext.Categories.ToList(),
-                Date = course.DateTime.ToString("dd/MM/yyyy"),
-                Place = course.Place,
-                Time = course.DateTime.ToString("HH:mm"),
-                Category = course.CategoryId
-            };
-            return View(viewModel);
+                var userId = User.Identity.GetUserId();
+                var course = _dbContext.Courses.FirstOrDefault(p => p.Id == id && p.LectureId == userId);
+
+                var viewModel = new CourseViewModel
+                {
+                    id = course.Id,
+                    Categories = _dbContext.Categories.ToList(),
+                    Date = course.DateTime.ToString("dd/MM/yyyy"),
+                    Place = course.Place,
+                    Time = course.DateTime.ToString("HH:mm"),
+                    Category = course.CategoryId
+                };
+                return View(viewModel);
+            }
+            return RedirectToAction("Home", "Course");
         }
+
+        [HttpPost]
+        public ActionResult EditCourse(CourseViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                viewModel.Categories = _dbContext.Categories.ToList();
+                return View(viewModel);
+            }
+            var updatecourse =  _dbContext.Courses.FirstOrDefault(p => p.Id == viewModel.id);
+            updatecourse.Place = viewModel.Place;
+            updatecourse.DateTime = viewModel.GetDateTime();
+            updatecourse.CategoryId = viewModel.Category;
+            _dbContext.SaveChanges();
+            return RedirectToAction("Home", "Course");
+        }
+
         [Authorize]
         public ActionResult DetailLecture(string id)
         {

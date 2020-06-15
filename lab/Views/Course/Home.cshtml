@@ -29,6 +29,9 @@
             Thời gian
         </th>
         <th>
+          Email
+        </th>
+         <th>
             Tên
         </th>
         <th>
@@ -48,57 +51,60 @@
 
     @foreach (var item in Model.UpcommingCourses)
     {
-        <tr>
-            <td>
-                <div class="date">
-                    <div class="month">@item.DateTime.ToString("MM")</div>
-                    <div class="day">@item.DateTime.ToString("dd") </div>
-                </div>
-            </td>
-            <td>
-                @item.Lecture.name
-            </td>
-            <td>
-                @item.Category.Name
-            </td>
-            <td>
-                @item.Place
-            </td>
+<tr>
+    <td>
+        <div class="date">
+            <div class="month">@item.DateTime.ToString("MM")</div>
+            <div class="day">@item.DateTime.ToString("dd") </div>
+        </div>
+    </td>
+    <td>
+        @item.Lecture.Email
+    </td>
+    <td>
+        @item.Lecture.name
+    </td>
+    <td>
+        @item.Category.Name
+    </td>
+    <td>
+        @item.Place
+    </td>
 
-            <td>
-                @if (item.LectureId == User.Identity.GetUserId() || !Model.ShowAction)
-                {
-                    <button data-course-id="@item.Id" class="btn btn-danger btn-sm js-toggle-attendance" disabled> Going?</button>
-                }
-                else if (Model.GetAttendances != null && Model.GetAttendances.Any(p => p.CourseId == item.Id && p.AttendeeId == User.Identity.GetUserId()) == true)
-                {
-                    <button data-course-id="@item.Id" class="btn btn-info btn-sm js-attendance"> UnGoing</button>
-                }
+    <td>
+        @if (item.LectureId == User.Identity.GetUserId() || !Model.ShowAction)
+        {
+            <button data-course-id="@item.Id" class="btn btn-danger btn-sm js-toggle-attendance" disabled> Going?</button>
+        }
+        else if (Model.GetAttendances != null && Model.GetAttendances.Any(p => p.CourseId == item.Id && p.AttendeeId == User.Identity.GetUserId()) == true)
+        {
+            <button data-course-id="@item.Id" class="btn btn-info btn-sm js-attendance"> UnGoing</button>
+        }
 
-                else
-                {
-                    <button data-course-id="@item.Id" class="btn btn-default btn-sm js-toggle-attendance"> Going?</button>
-                }
+        else
+        {
+            <button data-course-id="@item.Id" class="btn btn-default btn-sm js-toggle-attendance"> Going?</button>
+        }
 
-            </td>
-            <td>
-                @if (item.LectureId == User.Identity.GetUserId() || !Model.ShowAction)
-                {
-                    <button data-user-id="@item.LectureId" class="btn btn-danger btn-sm js-toggle-follow" disabled> Follow</button>
-                }
-                else if (Model.GetFollowings != null && Model.GetFollowings.Any(p => p.Follower.Id == item.LectureId && p.FolloweeId == User.Identity.GetUserId()) == true)
-                {
-                    <button data-user-id="@item.LectureId" class="btn btn-danger btn-sm js-follow"> UnFollow</button>
-                }
-                else
-                {
-                    <button data-user-id="@item.LectureId" class="btn btn-default btn-sm js-toggle-follow"> Follow</button>
-                }
+    </td>
+    <td>
+        @if (item.LectureId == User.Identity.GetUserId() || !Model.ShowAction)
+        {
+            <button data-user-id="@item.LectureId" class="btn btn-danger btn-sm js-toggle-follow" disabled> Follow</button>
+        }
+        else if (Model.GetFollowings != null && Model.GetFollowings.Any(p => p.Follower.Id == item.LectureId && p.FolloweeId == User.Identity.GetUserId()) == true)
+        {
+            <button data-user-id="@item.LectureId" class="btn btn-danger btn-sm js-follow"> UnFollow</button>
+        }
+        else
+        {
+            <button data-user-id="@item.LectureId" class="btn btn-default btn-sm js-toggle-follow"> Follow</button>
+        }
 
 
-            </td>
+    </td>
 
-        </tr>
+</tr>
     }
 
 </table>
@@ -152,7 +158,6 @@
             })
             $('.js-toggle-follow').click((e) => {
                 var button = $(e.target);
-
                 $.post('/api/Followings', { FolloweeId: button.attr("data-user-id") })
                     .done(() => {
                         button

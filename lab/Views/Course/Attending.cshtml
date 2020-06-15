@@ -58,15 +58,11 @@
             </td>
 
             <td>
-                @if (item.LectureId == User.Identity.GetUserId() || !Model.ShowAction)
-                {
-                    <button data-course-id="@item.Id" class="btn btn-danger btn-sm js-toggle-attendance" disabled> Going?</button>
-                }
-                else if (Model.GetAttendances != null && Model.GetAttendances.Any(p => p.CourseId == item.Id && p.AttendeeId == User.Identity.GetUserId()) == true)
+               
+                 @if (Model.GetAttendances != null && Model.GetAttendances.Any(p => p.CourseId == item.Id && p.AttendeeId == User.Identity.GetUserId()) == true)
                 {
                     <button data-course-id="@item.Id" class="btn btn-info btn-sm js-attendance"> UnGoing</button>
                 }
-
                 else
                 {
                     <button data-course-id="@item.Id" class="btn btn-default btn-sm js-toggle-attendance"> Going?</button>
