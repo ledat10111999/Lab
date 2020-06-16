@@ -124,7 +124,10 @@ namespace lab.Migrations
                     })
                 .PrimaryKey(t => t.Id)
                 .Index(t => t.Name, unique: true, name: "RoleNameIndex");
-            
+            Sql("INSERT INTO Categories (Id,Name) VALUES(1,'Developer')  ");
+            Sql("INSERT INTO Categories (Id,Name) VALUES(2,'Business')  ");
+            Sql("INSERT INTO Categories (Id,Name) VALUES(3,'Marketing')  ");
+
         }
         
         public override void Down()

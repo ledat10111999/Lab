@@ -23,8 +23,10 @@
         <th>Tên</th>
         <th>Địa chỉ</th>
         <th>Danh mục</th>
+        <th>Danh Sách AT</th>
         <th>Sửa</th>
         <th>Hiển thị</th>
+        <th>Xóa</th>
     </tr>
 
     @foreach (var item in Model)
@@ -45,7 +47,7 @@
     <td>
         @item.Category.Name
     </td>
-
+    <td > <a class="btn btn-info btn-block" href="/Course/GoingMe/@item.Id"> Danh sách học viên </a> </td>
     <td>
         <a href="/Course/EditCourse/@item.Id" class="btn btn-info">Edit</a>
     </td>
@@ -60,6 +62,9 @@
         {
             <button class="btn btn-danger btn-block hiddencourse" data-course-id="@item.Id">Hidden</button>
         }
+    </td>
+    <td>
+        <button class="btn btn-danger btn-block deletecourse" data-course-id="@item.Id">Xóa</button>
     </td>
 </tr>
     }
@@ -112,6 +117,31 @@
                                     .removeClass('btn-info')
                                     .addClass('btn-danger')
                                     .text("Hidden");
+                            }).fail(() => {
+                                alert('Something fail')
+                            })
+
+                        },
+                        Hủy: function () {
+                            return
+                        }
+                    }
+                });
+            })
+
+            $('.deletecourse').click((e) => {
+                e.preventDefault();
+                var link = $(e.target);
+                $.confirm({
+                    title: 'Xác nhận',
+                    content: 'Xóa khóa học',
+                    buttons: {
+                        OK: function () {
+                            $.ajax({
+                                url: "/api/DeleteCourse/" + link.attr("data-course-id"),
+                                method: "DELETE",
+                            }).done(() => {
+                                location.reload();
                             }).fail(() => {
                                 alert('Something fail')
                             })

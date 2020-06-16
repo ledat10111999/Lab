@@ -252,7 +252,31 @@ namespace lab.Controllers
             }
             return RedirectToAction("Home", "Course");
         }
+        [Authorize]
+        public ActionResult FollowingMe()
+        {
+            var id = User.Identity.GetUserId();
+            var FollowingMe = _dbContext.Followings.Where(p => p.FollowerId == id)
+                .Include(p=>p.Followee)
+                .Include(p=> p.Follower)
+                .ToList();
+            return View(FollowingMe);
+        }
+       
+        public ActionResult GoingMe(int? id)
+        {
+            if(id == null)
+            {
+                return RedirectToAction("Home", "Course");
+            }
+            var IDs = User.Identity.GetUserId();
+            var GoingMe = (from u in _dbContext.Users
+                           join a in _dbContext.Attendances on u.Id equals a.AttendeeId
+                           where a.CourseId == id
+                           select u).ToList();
+            return View(GoingMe);
 
-
+        }
+       
     }
 }
