@@ -90,6 +90,7 @@
                                     .removeClass('btn-danger')
                                     .addClass('btn-info')
                                     .text("Display");
+                                location.reload();
                             }).fail(() => {
                                 alert('Something fail')
                             })
@@ -117,6 +118,7 @@
                                     .removeClass('btn-info')
                                     .addClass('btn-danger')
                                     .text("Hidden");
+                                location.reload();
                             }).fail(() => {
                                 alert('Something fail')
                             })
@@ -141,6 +143,7 @@
                                 url: "/api/DeleteCourse/" + link.attr("data-course-id"),
                                 method: "DELETE",
                             }).done(() => {
+                                
                                 location.reload();
                             }).fail(() => {
                                 alert('Something fail')
